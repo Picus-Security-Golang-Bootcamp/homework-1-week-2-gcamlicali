@@ -4,10 +4,11 @@ import (
 	"fmt"
 	"os"
 	"strings"
+	"strconv"
 )
 
 // That slice contains booknames on the self as string
-var BookListInShelf = []string{ 
+var BookShelf = []string{ 
 	"Anna Karenina", 
 	"To Kill a Mockingbird",
 	"The Great Gatsby",
@@ -25,17 +26,20 @@ var BookListInShelf = []string{
 	"Invisible Islands",
 	"The Blackhouse",
 	"Why the Whales Came",
-}
+	"Where is Anna",
+	"The Man far from Earth",
+	"Black Sails"}
 
 func main() {
 
-	var command string = strings.ToLower(os.Args[1]) // Converts command to lower string
-	
+	command:= strings.ToLower(os.Args[1]) // Converts command to lower string
+	inputBookName := os.Args[2:]
+
 	switch (command)	{ // Choose right command
 	case "list":
 		PrintBookList()
 	case "search":
-		SearchBookOnShelf(os.Args[2:])
+		SearchBookOnShelf(inputBookName)
 	default:
 		fmt.Println("Unknown Command! Please use 'list' or 'search <bookname>' commands") // if the command does not exist print this line
 	}	
@@ -44,28 +48,33 @@ func main() {
 
 // Print All Books Name on New Line
 func PrintBookList() {
-	for i := 0; i < len(BookListInShelf); i++ {
-		fmt.Println(BookListInShelf[i])
+	for i := 0; i < len(BookShelf); i++ {
+		fmt.Println(BookShelf[i])
 	}
 }
 
 // Search Book name in Booklist, print screen if it exists or not exist
 func SearchBookOnShelf(booknameArr []string) {
-	booknameStr := strings.ToLower(strings.Join(booknameArr, " ")) // convert to lower for right compare
 	
-	if (Contains(BookListInShelf, booknameStr)){ // is exist or not exist 
-		fmt.Println("Yes, we have this book on our shelf")
-	}	else{
+	var BookId []int
+	booknameStr := strings.ToLower(strings.Join(booknameArr, " ")) // convert input to lower for right compare
+	
+	for i := 0; i < len(BookShelf); i++ {
+		if strings.Contains(strings.ToLower(BookShelf[i]), booknameStr) {
+			BookId = append(BookId,i)
+		}
+	}
+
+	if (len(BookId) > 0) {
+
+		fmt.Print("We found ")
+		fmt.Print(strconv.Itoa((len(BookId))))  // convert int to str
+		fmt.Println(" book(s) on shelf : ")
+
+		for i := 0; i < len(BookId); i++ {
+			fmt.Println(BookShelf[BookId[i]]) // Prints found books from list
+		}
+	} else {
 		fmt.Println("Sorry, we don't have this book")
 	}
-}
-
-// Compare string with other string in slice
-func Contains(a []string, x string) bool {
-    for _, n := range a {
-        if x == strings.ToLower(n) {
-            return true
-        }
-    }
-    return false
 }
